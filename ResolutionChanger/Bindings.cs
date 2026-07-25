@@ -17,6 +17,7 @@ internal sealed class Bindings : Form
     private void InitializeUi()
     {
         Text = "Resolution bindings";
+        Icon = ApplicationIcon.Shared;
         StartPosition = FormStartPosition.CenterScreen;
         MinimumSize = new Size(540, 300);
         Size = new Size(680, 400);

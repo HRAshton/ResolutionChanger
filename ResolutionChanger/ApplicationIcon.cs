@@ -4,7 +4,11 @@ internal static class ApplicationIcon
 {
     private const string ResourceName = "ResolutionChanger.Assets.appicon.ico";
 
-    public static Icon Load()
+    private static readonly Lazy<Icon> SharedIcon = new(Load);
+
+    public static Icon Shared => SharedIcon.Value;
+
+    private static Icon Load()
     {
         using Stream stream =
             typeof(ApplicationIcon).Assembly.GetManifestResourceStream(ResourceName)

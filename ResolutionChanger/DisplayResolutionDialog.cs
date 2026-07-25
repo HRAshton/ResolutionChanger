@@ -15,6 +15,7 @@ internal sealed class DisplayResolutionDialog : Form
     {
         _original = binding ?? ResolutionBinding.New();
         Text = "Display and resolution";
+        Icon = ApplicationIcon.Shared;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         StartPosition = FormStartPosition.CenterParent;
         MaximizeBox = false;

@@ -23,6 +23,7 @@ internal sealed class HotkeyDialog : Form
         _findBinding = findBinding;
         _hotkey = binding.HotkeyText;
         Text = "Set hotkey";
+        Icon = ApplicationIcon.Shared;
         FormBorderStyle = FormBorderStyle.FixedDialog;
         StartPosition = FormStartPosition.CenterParent;
         ClientSize = new Size(330, 140);
