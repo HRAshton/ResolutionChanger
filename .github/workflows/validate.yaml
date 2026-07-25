@@ -1,0 +1,56 @@
+name: Validate
+
+on:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      source-ref:
+        description: Git reference to validate.
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.event.pull_request.number || inputs.source-ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Format and build
+    runs-on: windows-2025
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.1.0
+        with:
+          persist-credentials: false
+          ref: ${{ inputs.source-ref || github.sha }}
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v6.0.0
+        with:
+          dotnet-version: 10.0.x
+          cache: true
+          cache-dependency-path: ResolutionChanger/ResolutionChanger.csproj
+
+      - name: Restore tools
+        run: dotnet tool restore
+
+      - name: Restore dependencies
+        run: dotnet restore ResolutionChanger.slnx --runtime win-x64
+
+      - name: Verify formatting
+        run: dotnet csharpier check ResolutionChanger
+
+      - name: Verify .NET code style
+        run: dotnet format ResolutionChanger.slnx --verify-no-changes --no-restore
+
+      - name: Build
+        run: >-
+          dotnet build ResolutionChanger.slnx
+          --configuration Release
+          --no-restore
+          -p:ContinuousIntegrationBuild=true
