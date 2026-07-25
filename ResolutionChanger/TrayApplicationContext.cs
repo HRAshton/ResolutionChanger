@@ -3,6 +3,7 @@ namespace ResolutionChanger;
 internal sealed class TrayApplicationContext : ApplicationContext
 {
     private const int ErrorBalloonTipTimeoutMilliseconds = 5000;
+    private const string ApplicationName = "Resolution Changer";
 
     private readonly NotifyIcon _trayIcon;
     private readonly BindingStore _store = new();
@@ -13,18 +14,51 @@ internal sealed class TrayApplicationContext : ApplicationContext
     {
         _hotkeys = new HotkeyManager(ApplyBinding);
         _hotkeys.Register(_store.Bindings);
+
         ContextMenuStrip menu = new();
         menu.Items.Add("Open bindings", null, (_, _) => Open());
+        menu.Items.Add(CreateStartupMenuItem());
         menu.Items.Add(new ToolStripSeparator());
         menu.Items.Add("Exit", null, (_, _) => Exit());
+
         _trayIcon = new NotifyIcon
         {
             Icon = SystemIcons.Application,
-            Text = "Resolution Changer",
+            Text = ApplicationName,
             ContextMenuStrip = menu,
             Visible = true,
         };
         _trayIcon.DoubleClick += (_, _) => Open();
+    }
+
+    private ToolStripMenuItem CreateStartupMenuItem()
+    {
+        ToolStripMenuItem item = new("Start when I sign in")
+        {
+            CheckOnClick = true,
+            Checked = StartupRegistrationService.IsEnabled(),
+        };
+        bool isUpdating = false;
+        item.CheckedChanged += (_, _) =>
+        {
+            if (isUpdating)
+            {
+                return;
+            }
+
+            try
+            {
+                StartupRegistrationService.SetEnabled(item.Checked);
+            }
+            catch (Exception exception)
+            {
+                isUpdating = true;
+                item.Checked = !item.Checked;
+                isUpdating = false;
+                ShowError(exception.Message);
+            }
+        };
+        return item;
     }
 
     private void Open()
@@ -56,12 +90,12 @@ internal sealed class TrayApplicationContext : ApplicationContext
         }
         catch (InvalidOperationException exception)
         {
-            _trayIcon.ShowBalloonTip(
-                ErrorBalloonTipTimeoutMilliseconds,
-                "Resolution Changer",
-                exception.Message,
-                ToolTipIcon.Error
-            );
+            ShowError(exception.Message);
         }
+    }
+
+    private void ShowError(string message)
+    {
+        _trayIcon.ShowBalloonTip(ErrorBalloonTipTimeoutMilliseconds, ApplicationName, message, ToolTipIcon.Error);
     }
 }
