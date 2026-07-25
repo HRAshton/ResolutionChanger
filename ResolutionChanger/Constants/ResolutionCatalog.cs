@@ -1,4 +1,6 @@
-namespace ResolutionChanger;
+using ResolutionChanger.Models;
+
+namespace ResolutionChanger.Constants;
 
 internal static class ResolutionCatalog
 {

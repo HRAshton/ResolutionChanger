@@ -1,6 +1,8 @@
 using System.Text.Json;
+using ResolutionChanger.Constants;
+using ResolutionChanger.Models;
 
-namespace ResolutionChanger;
+namespace ResolutionChanger.Configuration;
 
 internal sealed class BindingStore
 {

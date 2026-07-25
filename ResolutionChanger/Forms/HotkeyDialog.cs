@@ -1,4 +1,7 @@
-namespace ResolutionChanger;
+using ResolutionChanger.Constants;
+using ResolutionChanger.Models;
+
+namespace ResolutionChanger.Forms;
 
 internal sealed class HotkeyDialog : Form
 {

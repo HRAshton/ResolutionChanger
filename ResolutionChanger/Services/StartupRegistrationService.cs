@@ -1,6 +1,6 @@
 using Microsoft.Win32;
 
-namespace ResolutionChanger;
+namespace ResolutionChanger.Services;
 
 internal static class StartupRegistrationService
 {

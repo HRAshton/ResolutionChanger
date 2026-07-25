@@ -1,4 +1,6 @@
-namespace ResolutionChanger;
+using ResolutionChanger.Constants;
+
+namespace ResolutionChanger.Models;
 
 internal sealed record ResolutionBinding(
     Guid Id,

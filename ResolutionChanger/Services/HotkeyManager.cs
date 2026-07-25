@@ -1,6 +1,8 @@
+using ResolutionChanger.Constants;
+using ResolutionChanger.Models;
 using ResolutionChanger.NativeMethods;
 
-namespace ResolutionChanger;
+namespace ResolutionChanger.Services;
 
 internal sealed class HotkeyManager : NativeWindow, IDisposable
 {

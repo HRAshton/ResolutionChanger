@@ -1,4 +1,4 @@
-namespace ResolutionChanger;
+namespace ResolutionChanger.Constants;
 
 internal static class BindingDefaults
 {

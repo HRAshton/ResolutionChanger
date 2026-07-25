@@ -1,4 +1,8 @@
-namespace ResolutionChanger;
+using ResolutionChanger.Configuration;
+using ResolutionChanger.Models;
+using ResolutionChanger.Services;
+
+namespace ResolutionChanger.Forms;
 
 internal sealed class Bindings : Form
 {

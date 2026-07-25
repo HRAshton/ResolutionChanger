@@ -1,3 +1,8 @@
+using ResolutionChanger.Configuration;
+using ResolutionChanger.Forms;
+using ResolutionChanger.Models;
+using ResolutionChanger.Services;
+
 namespace ResolutionChanger;
 
 internal sealed class TrayApplicationContext : ApplicationContext

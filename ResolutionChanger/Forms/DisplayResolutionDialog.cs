@@ -1,4 +1,8 @@
-namespace ResolutionChanger;
+using ResolutionChanger.Constants;
+using ResolutionChanger.Models;
+using ResolutionChanger.Services;
+
+namespace ResolutionChanger.Forms;
 
 internal sealed class DisplayResolutionDialog : Form
 {

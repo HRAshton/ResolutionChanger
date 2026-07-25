@@ -1,9 +1,10 @@
 using System.Runtime.InteropServices;
+using ResolutionChanger.Models;
 using ResolutionChanger.NativeMethods;
 using DevMode = ResolutionChanger.NativeMethods.User32DisplayNativeMethods.DevMode;
 using DisplayDevice = ResolutionChanger.NativeMethods.User32DisplayNativeMethods.DisplayDevice;
 
-namespace ResolutionChanger;
+namespace ResolutionChanger.Services;
 
 internal static class DisplayService
 {
