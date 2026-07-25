@@ -6,8 +6,7 @@ internal sealed record ResolutionBinding(
     Guid Id,
     string DisplayDeviceName,
     string DisplayName,
-    int Width,
-    int Height,
+    Size Resolution,
     string HotkeyText
 )
 {
@@ -17,8 +16,7 @@ internal sealed record ResolutionBinding(
             Guid.NewGuid(),
             string.Empty,
             string.Empty,
-            BindingDefaults.DefaultWidth,
-            BindingDefaults.DefaultHeight,
+            BindingDefaults.DefaultResolution,
             BindingDefaults.UnassignedHotkeyText
         );
     }

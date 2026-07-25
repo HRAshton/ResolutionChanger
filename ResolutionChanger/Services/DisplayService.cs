@@ -58,7 +58,7 @@ internal static class DisplayService
         return displays;
     }
 
-    public static void ChangeResolution(string deviceName, int width, int height)
+    public static void ChangeResolution(string deviceName, Size resolution)
     {
         DevMode mode = DevMode.Create();
         if (!User32DisplayNativeMethods.EnumDisplaySettings(deviceName, uint.MaxValue, ref mode))
@@ -66,8 +66,8 @@ internal static class DisplayService
             throw new InvalidOperationException("The selected display is no longer available.");
         }
 
-        mode.PelsWidth = width;
-        mode.PelsHeight = height;
+        mode.PelsWidth = resolution.Width;
+        mode.PelsHeight = resolution.Height;
         mode.Fields = User32DisplayNativeMethods.DmPelsWidth | User32DisplayNativeMethods.DmPelsHeight;
         if (
             User32DisplayNativeMethods.ChangeDisplaySettingsEx(
@@ -80,7 +80,7 @@ internal static class DisplayService
         )
         {
             throw new InvalidOperationException(
-                $"Windows could not set {ResolutionFormatter.Format(width, height)} on the selected display."
+                $"Windows could not set {ResolutionFormatter.Format(resolution)} on the selected display."
             );
         }
     }

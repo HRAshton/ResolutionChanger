@@ -1,10 +1,8 @@
-using ResolutionChanger.Models;
-
 namespace ResolutionChanger.Constants;
 
 internal static class ResolutionCatalog
 {
-    public static readonly IReadOnlyList<CatalogResolution> All =
+    public static readonly IReadOnlyList<Size> All =
     [
         new(640, 480),
         new(800, 600),

@@ -110,7 +110,7 @@ internal sealed class HotkeyDialog : Form
             && existing.Id != _original.Id
             && MessageBox.Show(
                 this,
-                $"{_hotkey} is assigned to {existing.DisplayName} - {ResolutionFormatter.Format(existing.Width, existing.Height)}. Override it?",
+                $"{_hotkey} is assigned to {existing.DisplayName} - {ResolutionFormatter.Format(existing.Resolution)}. Override it?",
                 Text,
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning

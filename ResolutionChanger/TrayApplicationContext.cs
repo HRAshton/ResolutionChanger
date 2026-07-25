@@ -91,7 +91,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
     {
         try
         {
-            DisplayService.ChangeResolution(binding.DisplayDeviceName, binding.Width, binding.Height);
+            DisplayService.ChangeResolution(binding.DisplayDeviceName, binding.Resolution);
         }
         catch (InvalidOperationException exception)
         {

@@ -119,7 +119,7 @@ internal sealed class Bindings : Form
         foreach (ResolutionBinding binding in _store.Bindings)
         {
             int row = _grid.Rows.Add(
-                $"{binding.DisplayName} - {ResolutionFormatter.Format(binding.Width, binding.Height)}",
+                $"{binding.DisplayName} - {ResolutionFormatter.Format(binding.Resolution)}",
                 binding.HotkeyText
             );
             _grid.Rows[row].Tag = binding;

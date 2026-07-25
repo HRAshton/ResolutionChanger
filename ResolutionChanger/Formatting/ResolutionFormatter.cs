@@ -2,21 +2,21 @@ namespace ResolutionChanger.Formatting;
 
 internal static class ResolutionFormatter
 {
-    public static string Format(int width, int height)
+    public static string Format(Size resolution)
     {
-        return $"{width} × {height} ({FormatAspectRatio(width, height)})";
+        return $"{resolution.Width} × {resolution.Height} ({FormatAspectRatio(resolution)})";
     }
 
-    public static string FormatAspectRatio(int width, int height)
+    public static string FormatAspectRatio(Size resolution)
     {
-        int divisor = GreatestCommonDivisor(width, height);
-        string exactRatio = $"{width / divisor}:{height / divisor}";
-        if (width % height == 0)
+        int divisor = GreatestCommonDivisor(resolution.Width, resolution.Height);
+        string exactRatio = $"{resolution.Width / divisor}:{resolution.Height / divisor}";
+        if (resolution.Width % resolution.Height == 0)
         {
             return exactRatio;
         }
 
-        decimal approximateRatio = (decimal)width / height;
+        decimal approximateRatio = (decimal)resolution.Width / resolution.Height;
         return $"{exactRatio} · {approximateRatio:0.##}:1";
     }
 

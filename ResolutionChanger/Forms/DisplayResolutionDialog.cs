@@ -36,8 +36,8 @@ internal sealed class DisplayResolutionDialog : Form
             0,
             _displays.ToList().FindIndex(x => x.DeviceName == _original.DisplayDeviceName)
         );
-        _width.Value = _original.Width;
-        _height.Value = _original.Height;
+        _width.Value = _original.Resolution.Width;
+        _height.Value = _original.Resolution.Height;
         Button select = new() { Text = "Select…", AutoSize = true };
         select.Click += ShowKnownResolutions;
         Button ok = new()
@@ -114,22 +114,19 @@ internal sealed class DisplayResolutionDialog : Form
         DisplayInfo? display = _display.SelectedItem as DisplayInfo;
         HashSet<Size> supported = display?.SupportedResolutions.ToHashSet() ?? [];
         foreach (
-            IGrouping<string, CatalogResolution> group in ResolutionCatalog.All.GroupBy(x =>
-                ResolutionFormatter.FormatAspectRatio(x.Width, x.Height)
+            IGrouping<string, Size> group in ResolutionCatalog.All.GroupBy(x =>
+                ResolutionFormatter.FormatAspectRatio(x)
             )
         )
         {
             ToolStripMenuItem ratio = new(group.Key);
-            foreach (CatalogResolution resolution in group)
+            foreach (Size resolution in group)
             {
                 ToolStripMenuItem item = new(
-                    $"{resolution.Width} × {resolution.Height}{(supported.Contains(resolution.Size) ? "  ✓ supported" : string.Empty)}"
+                    $"{resolution.Width} × {resolution.Height}{(supported.Contains(resolution) ? "  ✓ supported" : string.Empty)}"
                 )
                 {
-                    Font = new Font(
-                        menu.Font,
-                        supported.Contains(resolution.Size) ? FontStyle.Bold : FontStyle.Regular
-                    ),
+                    Font = new Font(menu.Font, supported.Contains(resolution) ? FontStyle.Bold : FontStyle.Regular),
                 };
                 item.Click += (_, _) =>
                 {
@@ -164,8 +161,7 @@ internal sealed class DisplayResolutionDialog : Form
         {
             DisplayDeviceName = display.DeviceName,
             DisplayName = display.DisplayName,
-            Width = (int)_width.Value,
-            Height = (int)_height.Value,
+            Resolution = new Size((int)_width.Value, (int)_height.Value),
         };
     }
 }
