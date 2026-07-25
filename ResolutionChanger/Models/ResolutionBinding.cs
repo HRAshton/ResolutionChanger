@@ -10,13 +10,13 @@ internal sealed record ResolutionBinding(
     string HotkeyText
 )
 {
-    public static ResolutionBinding New()
+    public static ResolutionBinding New(Size resolution)
     {
         return new ResolutionBinding(
             Guid.NewGuid(),
             string.Empty,
             string.Empty,
-            BindingDefaults.DefaultResolution,
+            resolution,
             BindingDefaults.UnassignedHotkeyText
         );
     }

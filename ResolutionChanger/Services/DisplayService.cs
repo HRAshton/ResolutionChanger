@@ -32,6 +32,12 @@ internal static class DisplayService
                 continue;
             }
 
+            DevMode currentMode = DevMode.Create();
+            if (!User32DisplayNativeMethods.EnumDisplaySettings(device.DeviceName, uint.MaxValue, ref currentMode))
+            {
+                continue;
+            }
+
             HashSet<Size> resolutions = [];
             DevMode mode = DevMode.Create();
             for (
@@ -50,7 +56,9 @@ internal static class DisplayService
                 new DisplayInfo(
                     device.DeviceName,
                     device.DeviceString,
-                    [.. resolutions.OrderBy(x => x.Width * x.Height)]
+                    new Size(currentMode.PelsWidth, currentMode.PelsHeight),
+                    [.. resolutions.OrderBy(x => x.Width * x.Height)],
+                    (device.StateFlags & User32DisplayNativeMethods.DisplayDevicePrimaryDevice) != 0
                 )
             );
         }

@@ -6,6 +6,7 @@ internal static class User32DisplayNativeMethods
 {
     internal const uint NoFlags = 0;
     internal const int DisplayDeviceAttachedToDesktop = 0x00000001;
+    internal const int DisplayDevicePrimaryDevice = 0x00000004;
     internal const int ChangeDisplaySettingsSuccess = 0;
     internal const int DmPelsWidth = 0x00080000;
     internal const int DmPelsHeight = 0x00100000;

@@ -18,7 +18,8 @@ internal sealed class DisplayResolutionDialog : Form
 
     public DisplayResolutionDialog(ResolutionBinding? binding)
     {
-        _original = binding ?? ResolutionBinding.New();
+        DisplayInfo defaultDisplay = _displays.FirstOrDefault(x => x.IsPrimary) ?? _displays[0];
+        _original = binding ?? ResolutionBinding.New(defaultDisplay.CurrentResolution);
         Text = "Display and resolution";
         Icon = ApplicationIcon.Shared;
         FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -32,10 +33,9 @@ internal sealed class DisplayResolutionDialog : Form
         }
 
         _display.DisplayMember = nameof(DisplayInfo.DisplayName);
-        _display.SelectedIndex = Math.Max(
-            0,
-            _displays.ToList().FindIndex(x => x.DeviceName == _original.DisplayDeviceName)
-        );
+        _display.SelectedItem = binding is null
+            ? defaultDisplay
+            : _displays.FirstOrDefault(x => x.DeviceName == _original.DisplayDeviceName) ?? defaultDisplay;
         _width.Value = _original.Resolution.Width;
         _height.Value = _original.Resolution.Height;
         Button select = new() { Text = "Select…", AutoSize = true };
@@ -113,20 +113,16 @@ internal sealed class DisplayResolutionDialog : Form
         ContextMenuStrip menu = new();
         DisplayInfo? display = _display.SelectedItem as DisplayInfo;
         HashSet<Size> supported = display?.SupportedResolutions.ToHashSet() ?? [];
-        foreach (
-            IGrouping<string, Size> group in ResolutionCatalog.All.GroupBy(x =>
-                ResolutionFormatter.FormatAspectRatio(x)
-            )
-        )
+        foreach (IGrouping<string, Size> group in ResolutionCatalog.All.GroupBy(ResolutionFormatter.FormatAspectRatio))
         {
             ToolStripMenuItem ratio = new(group.Key);
             foreach (Size resolution in group)
             {
-                ToolStripMenuItem item = new(
-                    $"{resolution.Width} × {resolution.Height}{(supported.Contains(resolution) ? "  ✓ supported" : string.Empty)}"
-                )
+                bool isSupported = supported.Contains(resolution);
+                string isSupportedText = isSupported ? "  ✓ supported" : string.Empty;
+                ToolStripMenuItem item = new($"{resolution.Width} × {resolution.Height}{isSupportedText}")
                 {
-                    Font = new Font(menu.Font, supported.Contains(resolution) ? FontStyle.Bold : FontStyle.Regular),
+                    Font = new Font(menu.Font, isSupported ? FontStyle.Bold : FontStyle.Regular),
                 };
                 item.Click += (_, _) =>
                 {
