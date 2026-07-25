@@ -1,6 +1,6 @@
 namespace ResolutionChanger.Models;
 
-internal readonly record struct CatalogResolution(string Ratio, int Width, int Height)
+internal readonly record struct CatalogResolution(int Width, int Height)
 {
     public Size Size => new(Width, Height);
 }

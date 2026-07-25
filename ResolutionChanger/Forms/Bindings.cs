@@ -1,4 +1,5 @@
 using ResolutionChanger.Configuration;
+using ResolutionChanger.Formatting;
 using ResolutionChanger.Models;
 using ResolutionChanger.Services;
 
@@ -117,7 +118,10 @@ internal sealed class Bindings : Form
         _grid.Rows.Clear();
         foreach (ResolutionBinding binding in _store.Bindings)
         {
-            int row = _grid.Rows.Add($"{binding.DisplayName} - {binding.Width} × {binding.Height}", binding.HotkeyText);
+            int row = _grid.Rows.Add(
+                $"{binding.DisplayName} - {ResolutionFormatter.Format(binding.Width, binding.Height)}",
+                binding.HotkeyText
+            );
             _grid.Rows[row].Tag = binding;
         }
     }

@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using ResolutionChanger.Formatting;
 using ResolutionChanger.Models;
 using ResolutionChanger.NativeMethods;
 using DevMode = ResolutionChanger.NativeMethods.User32DisplayNativeMethods.DevMode;
@@ -78,7 +79,9 @@ internal static class DisplayService
             ) != User32DisplayNativeMethods.ChangeDisplaySettingsSuccess
         )
         {
-            throw new InvalidOperationException($"Windows could not set {width} × {height} on the selected display.");
+            throw new InvalidOperationException(
+                $"Windows could not set {ResolutionFormatter.Format(width, height)} on the selected display."
+            );
         }
     }
 }

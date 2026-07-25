@@ -1,4 +1,5 @@
 using ResolutionChanger.Constants;
+using ResolutionChanger.Formatting;
 using ResolutionChanger.Models;
 
 namespace ResolutionChanger.Forms;
@@ -109,7 +110,7 @@ internal sealed class HotkeyDialog : Form
             && existing.Id != _original.Id
             && MessageBox.Show(
                 this,
-                $"{_hotkey} is assigned to {existing.DisplayName} - {existing.Width} × {existing.Height}. Override it?",
+                $"{_hotkey} is assigned to {existing.DisplayName} - {ResolutionFormatter.Format(existing.Width, existing.Height)}. Override it?",
                 Text,
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning

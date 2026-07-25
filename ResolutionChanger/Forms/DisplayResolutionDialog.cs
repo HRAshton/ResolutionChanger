@@ -1,4 +1,5 @@
 using ResolutionChanger.Constants;
+using ResolutionChanger.Formatting;
 using ResolutionChanger.Models;
 using ResolutionChanger.Services;
 
@@ -112,7 +113,11 @@ internal sealed class DisplayResolutionDialog : Form
         ContextMenuStrip menu = new();
         DisplayInfo? display = _display.SelectedItem as DisplayInfo;
         HashSet<Size> supported = display?.SupportedResolutions.ToHashSet() ?? [];
-        foreach (IGrouping<string, CatalogResolution> group in ResolutionCatalog.All.GroupBy(x => x.Ratio))
+        foreach (
+            IGrouping<string, CatalogResolution> group in ResolutionCatalog.All.GroupBy(x =>
+                ResolutionFormatter.FormatAspectRatio(x.Width, x.Height)
+            )
+        )
         {
             ToolStripMenuItem ratio = new(group.Key);
             foreach (CatalogResolution resolution in group)
