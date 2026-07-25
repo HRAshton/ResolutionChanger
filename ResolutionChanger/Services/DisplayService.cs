@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using ResolutionChanger.Formatting;
 using ResolutionChanger.Models;
 using ResolutionChanger.NativeMethods;
 using DevMode = ResolutionChanger.NativeMethods.User32DisplayNativeMethods.DevMode;
@@ -66,30 +65,35 @@ internal static class DisplayService
         return displays;
     }
 
-    public static void ChangeResolution(string deviceName, Size resolution)
+    public static DisplayChangeResult ChangeResolution(string deviceName, Size resolution)
     {
+        DisplayInfo? display = GetDisplays().FirstOrDefault(x => x.DeviceName == deviceName);
+        if (display is null)
+        {
+            return DisplayChangeResult.DisplayUnavailable;
+        }
+
+        if (!display.SupportedResolutions.Contains(resolution))
+        {
+            return DisplayChangeResult.UnsupportedResolution;
+        }
+
         DevMode mode = DevMode.Create();
         if (!User32DisplayNativeMethods.EnumDisplaySettings(deviceName, uint.MaxValue, ref mode))
         {
-            throw new InvalidOperationException("The selected display is no longer available.");
+            return DisplayChangeResult.DisplayUnavailable;
         }
 
         mode.PelsWidth = resolution.Width;
         mode.PelsHeight = resolution.Height;
         mode.Fields = User32DisplayNativeMethods.DmPelsWidth | User32DisplayNativeMethods.DmPelsHeight;
-        if (
-            User32DisplayNativeMethods.ChangeDisplaySettingsEx(
-                deviceName,
-                ref mode,
-                IntPtr.Zero,
-                User32DisplayNativeMethods.NoFlags,
-                IntPtr.Zero
-            ) != User32DisplayNativeMethods.ChangeDisplaySettingsSuccess
-        )
-        {
-            throw new InvalidOperationException(
-                $"Windows could not set {ResolutionFormatter.Format(resolution)} on the selected display."
-            );
-        }
+        int result = User32DisplayNativeMethods.ChangeDisplaySettingsEx(
+            deviceName,
+            ref mode,
+            IntPtr.Zero,
+            User32DisplayNativeMethods.NoFlags,
+            IntPtr.Zero
+        );
+        return (DisplayChangeResult)result;
     }
 }

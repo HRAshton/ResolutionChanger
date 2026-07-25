@@ -1,4 +1,5 @@
 using ResolutionChanger.Configuration;
+using ResolutionChanger.Formatting;
 using ResolutionChanger.Forms;
 using ResolutionChanger.Models;
 using ResolutionChanger.Services;
@@ -89,14 +90,28 @@ internal sealed class TrayApplicationContext : ApplicationContext
 
     private void ApplyBinding(ResolutionBinding binding)
     {
-        try
+        DisplayChangeResult result = DisplayService.ChangeResolution(binding.DisplayDeviceName, binding.Resolution);
+        if (result != DisplayChangeResult.Success)
         {
-            DisplayService.ChangeResolution(binding.DisplayDeviceName, binding.Resolution);
+            ShowError(GetDisplayChangeErrorMessage(binding, result));
         }
-        catch (InvalidOperationException exception)
+    }
+
+    private static string GetDisplayChangeErrorMessage(ResolutionBinding binding, DisplayChangeResult result)
+    {
+        string resolution = ResolutionFormatter.Format(binding.Resolution);
+        return result switch
         {
-            ShowError(exception.Message);
-        }
+            DisplayChangeResult.DisplayUnavailable => $"{binding.DisplayName} is no longer available.",
+            DisplayChangeResult.UnsupportedResolution => $"{resolution} is not supported by {binding.DisplayName}.",
+            DisplayChangeResult.BadMode =>
+                $"Windows rejected {resolution} for {binding.DisplayName} because the display driver does not support that mode.",
+            DisplayChangeResult.NotUpdated =>
+                $"Windows could not apply {resolution} for {binding.DisplayName} because the display settings were not updated.",
+            DisplayChangeResult.RestartRequired =>
+                $"Windows requires a restart before it can apply {resolution} for {binding.DisplayName}.",
+            _ => $"Windows could not set {resolution} on {binding.DisplayName} (Windows display code: {(int)result}).",
+        };
     }
 
     private void ShowError(string message)
