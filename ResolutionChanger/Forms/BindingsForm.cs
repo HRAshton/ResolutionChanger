@@ -5,13 +5,13 @@ using ResolutionChanger.Services;
 
 namespace ResolutionChanger.Forms;
 
-internal sealed class Bindings : Form
+internal sealed class BindingsForm : Form
 {
     private readonly BindingStore _store;
     private readonly HotkeyManager _hotkeys;
     private readonly DataGridView _grid = new();
 
-    public Bindings(BindingStore store, HotkeyManager hotkeys)
+    public BindingsForm(BindingStore store, HotkeyManager hotkeys)
     {
         _store = store;
         _hotkeys = hotkeys;

@@ -14,7 +14,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
     private readonly NotifyIcon _trayIcon;
     private readonly BindingStore _store = new();
     private readonly HotkeyManager _hotkeys;
-    private Bindings? _bindingsForm;
+    private BindingsForm? _bindingsForm;
 
     public TrayApplicationContext()
     {
@@ -71,7 +71,7 @@ internal sealed class TrayApplicationContext : ApplicationContext
     {
         if (_bindingsForm is null || _bindingsForm.IsDisposed)
         {
-            _bindingsForm = new Bindings(_store, _hotkeys);
+            _bindingsForm = new BindingsForm(_store, _hotkeys);
             _bindingsForm.FormClosed += (_, _) => _bindingsForm = null;
         }
 
