@@ -1,15 +1,14 @@
 using ResolutionChanger.Constants;
 using ResolutionChanger.Formatting;
 
-namespace ResolutionChanger.Forms;
+namespace ResolutionChanger.Services;
 
 internal static class ResolutionMenuBuilder
 {
     public static ContextMenuStrip Create(IReadOnlySet<Size> supportedResolutions, Action<Size> selectResolution)
     {
         ContextMenuStrip menu = new();
-        IEnumerable<IGrouping<string, Size>> groups = ResolutionCatalog.All
-            .Concat(supportedResolutions)
+        IEnumerable<IGrouping<string, Size>> groups = ((Size[])[.. ResolutionCatalog.All, .. supportedResolutions])
             .Distinct()
             .OrderBy(x => x.Width)
             .GroupBy(ResolutionFormatter.FormatAspectRatio);
