@@ -1,5 +1,3 @@
-using ResolutionChanger.Constants;
-using ResolutionChanger.Formatting;
 using ResolutionChanger.Models;
 using ResolutionChanger.Services;
 
@@ -110,32 +108,19 @@ internal sealed class DisplayResolutionDialog : Form
 
     private void ShowKnownResolutions(object? sender, EventArgs e)
     {
-        ContextMenuStrip menu = new();
         DisplayInfo? display = _display.SelectedItem as DisplayInfo;
-        HashSet<Size> supported = display?.SupportedResolutions.ToHashSet() ?? [];
-        foreach (IGrouping<string, Size> group in ResolutionCatalog.All.GroupBy(ResolutionFormatter.FormatAspectRatio))
-        {
-            ToolStripMenuItem ratio = new(group.Key);
-            foreach (Size resolution in group)
-            {
-                bool isSupported = supported.Contains(resolution);
-                string isSupportedText = isSupported ? "  ✓ supported" : string.Empty;
-                ToolStripMenuItem item = new($"{resolution.Width} × {resolution.Height}{isSupportedText}")
-                {
-                    Font = new Font(menu.Font, isSupported ? FontStyle.Bold : FontStyle.Regular),
-                };
-                item.Click += (_, _) =>
-                {
-                    _width.Value = resolution.Width;
-                    _height.Value = resolution.Height;
-                };
-                ratio.DropDownItems.Add(item);
-            }
+        ContextMenuStrip menu = ResolutionMenuBuilder.Create(
+            display?.SupportedResolutions.ToHashSet() ?? [],
+            SelectResolution
+        );
+        Control selectButton = (Control)sender!;
+        menu.Show(selectButton, new Point(0, selectButton.Height));
+    }
 
-            menu.Items.Add(ratio);
-        }
-
-        menu.Show((Control)sender!, new Point(0, ((Control)sender!).Height));
+    private void SelectResolution(Size resolution)
+    {
+        _width.Value = resolution.Width;
+        _height.Value = resolution.Height;
     }
 
     private void Approve(object? sender, EventArgs e)
