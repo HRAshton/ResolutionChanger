@@ -14,16 +14,17 @@ A small Windows tray application that switches a chosen display to a chosen reso
 ## Download and run
 
 1. Open the repository’s [Releases](../../releases) page.
-2. Download `ResolutionChanger.exe` and `ResolutionChanger.exe.sha256` from the latest release.
+2. Download the versioned executable (for example, `ResolutionChanger-v1.2.3.exe`) and its matching `.sha256` file.
 3. Optionally verify the download in PowerShell:
 
    ```powershell
-   $expected = (Get-Content .\ResolutionChanger.exe.sha256).Split(' ')[0]
-   $actual = (Get-FileHash .\ResolutionChanger.exe -Algorithm SHA256).Hash.ToLowerInvariant()
+   $executable = 'ResolutionChanger-v1.2.3.exe'
+   $expected = (Get-Content "$executable.sha256").Split(' ')[0]
+   $actual = (Get-FileHash $executable -Algorithm SHA256).Hash.ToLowerInvariant()
    if ($actual -eq $expected) { 'Checksum verified.' } else { throw 'Checksum mismatch.' }
    ```
 
-4. Run `ResolutionChanger.exe`.
+4. Run the executable.
 
 The application starts in the notification area. Right-click its icon and choose **Open bindings**.
 
