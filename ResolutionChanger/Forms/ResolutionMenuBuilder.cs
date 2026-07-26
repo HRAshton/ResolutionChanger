@@ -8,7 +8,12 @@ internal static class ResolutionMenuBuilder
     public static ContextMenuStrip Create(IReadOnlySet<Size> supportedResolutions, Action<Size> selectResolution)
     {
         ContextMenuStrip menu = new();
-        foreach (IGrouping<string, Size> group in ResolutionCatalog.All.GroupBy(ResolutionFormatter.FormatAspectRatio))
+        IEnumerable<IGrouping<string, Size>> groups = ResolutionCatalog.All
+            .Concat(supportedResolutions)
+            .Distinct()
+            .OrderBy(x => x.Width)
+            .GroupBy(ResolutionFormatter.FormatAspectRatio);
+        foreach (IGrouping<string, Size> group in groups)
         {
             ToolStripMenuItem ratio = new(group.Key);
             foreach (Size resolution in group)
