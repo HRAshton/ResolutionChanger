@@ -5,7 +5,7 @@ A small Windows tray application that switches a chosen display to a chosen reso
 ## Why use it?
 
 - **Single-file release:** download and run one `.exe`.
-- **No extra runtime dependency:** release builds are self-contained; users do not need to install .NET.
+- **Small single-file release:** requires the .NET 10 Desktop Runtime (x64).
 - **Per-display bindings:** map any installed display and resolution to a global hotkey.
 - **Safe hotkey changes:** the app warns before replacing an existing hotkey binding.
 - **User-controlled startup:** enable or disable “Start when I sign in” from the tray menu.
@@ -13,9 +13,10 @@ A small Windows tray application that switches a chosen display to a chosen reso
 
 ## Download and run
 
-1. Open the repository’s [Releases](../../releases) page.
-2. Download the versioned executable (for example, `ResolutionChanger-v1.2.3.exe`) and its matching `.sha256` file.
-3. Optionally verify the download in PowerShell:
+1. Install the [.NET 10 Desktop Runtime (x64)](https://dotnet.microsoft.com/download/dotnet/10.0).
+2. Open the repository’s [Releases](../../releases) page.
+3. Download the versioned executable (for example, `ResolutionChanger-v1.2.3.exe`) and its matching `.sha256` file.
+4. Optionally verify the download in PowerShell:
 
    ```powershell
    $executable = 'ResolutionChanger-v1.2.3.exe'
@@ -24,7 +25,7 @@ A small Windows tray application that switches a chosen display to a chosen reso
    if ($actual -eq $expected) { 'Checksum verified.' } else { throw 'Checksum mismatch.' }
    ```
 
-4. Run the executable.
+5. Run the executable.
 
 The application starts in the notification area. Right-click its icon and choose **Open bindings**.
 
@@ -46,6 +47,7 @@ The shortcut works globally while Resolution Changer is running. To launch it au
 ## Requirements and limitations
 
 - Windows only; the app uses Windows display and global-hotkey APIs.
+- The .NET 10 Desktop Runtime (x64) is required to run the release executable.
 - A resolution must be supported by the target display and graphics driver for Windows to apply it.
 - Resolution Changer changes the display mode only; it does not manage refresh rate, HDR, or monitor layout.
 
@@ -66,7 +68,7 @@ Create the distributable executable with:
 dotnet publish ResolutionChanger/ResolutionChanger.csproj --configuration Release
 ```
 
-The self-contained single-file output is written under:
+The framework-dependent single-file output is written under:
 
 ```text
 ResolutionChanger/bin/Release/net10.0-windows/win-x64/publish/ResolutionChanger.exe
