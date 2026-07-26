@@ -1,3 +1,4 @@
+using ResolutionChanger.Formatting;
 using ResolutionChanger.Models;
 using ResolutionChanger.Services;
 
@@ -12,6 +13,13 @@ internal sealed class DisplayResolutionDialog : Form
     private readonly ComboBox _display = new() { DropDownStyle = ComboBoxStyle.DropDownList };
     private readonly NumericUpDown _width = new() { Minimum = 1, Maximum = MaximumResolutionDimension };
     private readonly NumericUpDown _height = new() { Minimum = 1, Maximum = MaximumResolutionDimension };
+    private readonly Label _ratio = new()
+    {
+        AutoSize = true,
+        BorderStyle = BorderStyle.None,
+        Padding = new Padding(3),
+    };
+
     public ResolutionBinding? Binding { get; private set; }
 
     public DisplayResolutionDialog(ResolutionBinding? binding)
@@ -24,7 +32,7 @@ internal sealed class DisplayResolutionDialog : Form
         StartPosition = FormStartPosition.CenterParent;
         MaximizeBox = false;
         MinimizeBox = false;
-        ClientSize = new Size(460, 190);
+        ClientSize = new Size(480, 210);
         foreach (DisplayInfo item in _displays)
         {
             _display.Items.Add(item);
@@ -36,13 +44,17 @@ internal sealed class DisplayResolutionDialog : Form
             : _displays.FirstOrDefault(x => x.DeviceName == _original.DisplayDeviceName) ?? defaultDisplay;
         _width.Value = _original.Resolution.Width;
         _height.Value = _original.Resolution.Height;
-        Button select = new() { Text = "Select…", AutoSize = true };
-        select.Click += ShowKnownResolutions;
+        _width.ValueChanged += UpdateRatio;
+        _height.ValueChanged += UpdateRatio;
+
+        Button presets = new() { Text = "Presets…", AutoSize = true };
+        presets.Click += ShowKnownResolutions;
         Button ok = new()
         {
             Text = "OK",
             DialogResult = DialogResult.OK,
             Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
+            AutoSizeMode = AutoSizeMode.GrowOnly,
         };
         ok.Click += Approve;
         Button cancel = new()
@@ -50,60 +62,55 @@ internal sealed class DisplayResolutionDialog : Form
             Text = "Cancel",
             DialogResult = DialogResult.Cancel,
             Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
+            AutoSizeMode = AutoSizeMode.GrowOnly,
         };
+        FlowLayoutPanel resolutionInputs = new() { AutoSize = true, WrapContents = false };
+        resolutionInputs.Controls.Add(_width);
+        resolutionInputs.Controls.Add(
+            new Label
+            {
+                Text = "×",
+                AutoSize = true,
+                Padding = new Padding(3, 4, 3, 0),
+            }
+        );
+        resolutionInputs.Controls.Add(_height);
+        resolutionInputs.Controls.Add(presets);
+        FlowLayoutPanel buttons = new() { FlowDirection = FlowDirection.RightToLeft, Dock = DockStyle.Fill };
+        buttons.Controls.Add(cancel);
+        buttons.Controls.Add(ok);
         TableLayoutPanel layout = new()
         {
             Dock = DockStyle.Fill,
             Padding = new Padding(12),
-            ColumnCount = 3,
+            ColumnCount = 2,
             RowCount = 4,
         };
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
         layout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-        layout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
-        layout.Controls.Add(
-            new Label
-            {
-                Text = "Display:",
-                AutoSize = true,
-                Anchor = AnchorStyles.Left,
-            },
-            0,
-            0
-        );
+        layout.Controls.Add(CreateLabel("Display:"), 0, 0);
         layout.Controls.Add(_display, 1, 0);
-        layout.SetColumnSpan(_display, 2);
-        layout.Controls.Add(
-            new Label
-            {
-                Text = "Width:",
-                AutoSize = true,
-                Anchor = AnchorStyles.Left,
-            },
-            0,
-            1
-        );
-        layout.Controls.Add(_width, 1, 1);
-        layout.Controls.Add(
-            new Label
-            {
-                Text = "Height:",
-                AutoSize = true,
-                Anchor = AnchorStyles.Left,
-            },
-            0,
-            2
-        );
-        layout.Controls.Add(_height, 1, 2);
-        layout.Controls.Add(select, 2, 2);
-        FlowLayoutPanel buttons = new() { FlowDirection = FlowDirection.RightToLeft, Dock = DockStyle.Fill };
-        buttons.Controls.Add(cancel);
-        buttons.Controls.Add(ok);
+        layout.Controls.Add(CreateLabel("Resolution:"), 0, 1);
+        layout.Controls.Add(resolutionInputs, 1, 1);
+        layout.Controls.Add(CreateLabel("Ratio:"), 0, 2);
+        layout.Controls.Add(_ratio, 1, 2);
         layout.Controls.Add(buttons, 0, 3);
-        layout.SetColumnSpan(buttons, 3);
+        layout.SetColumnSpan(buttons, 2);
+        _display.Dock = DockStyle.Fill;
         Controls.Add(layout);
         AcceptButton = ok;
         CancelButton = cancel;
+        UpdateRatio(this, EventArgs.Empty);
+    }
+
+    private static Label CreateLabel(string text)
+    {
+        return new Label
+        {
+            Text = text,
+            AutoSize = true,
+            Anchor = AnchorStyles.Left,
+        };
     }
 
     private void ShowKnownResolutions(object? sender, EventArgs e)
@@ -113,14 +120,19 @@ internal sealed class DisplayResolutionDialog : Form
             display?.SupportedResolutions.ToHashSet() ?? [],
             SelectResolution
         );
-        Control selectButton = (Control)sender!;
-        menu.Show(selectButton, new Point(0, selectButton.Height));
+        Control presetsButton = (Control)sender!;
+        menu.Show(presetsButton, new Point(0, presetsButton.Height));
     }
 
     private void SelectResolution(Size resolution)
     {
         _width.Value = resolution.Width;
         _height.Value = resolution.Height;
+    }
+
+    private void UpdateRatio(object? sender, EventArgs e)
+    {
+        _ratio.Text = ResolutionFormatter.FormatAspectRatio(new Size((int)_width.Value, (int)_height.Value));
     }
 
     private void Approve(object? sender, EventArgs e)
